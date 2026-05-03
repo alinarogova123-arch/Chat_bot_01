@@ -19,11 +19,12 @@ def run_bot(headers, params, url, bot, chat_id):
                 time.sleep(20)
         else:
             attempt = 0
-            if response.json().get("status") == "timeout":
-                timestamp_to_request = response.json().get("timestamp_to_request")
-            if response.json().get("status") == "found":
-                timestamp_to_request = response.json().get("last_attempt_timestamp")
-                messages = response.json().get("new_attempts")
+            notification = response.json()
+            if notification.get("status") == "timeout":
+                timestamp_to_request = notification.get("timestamp_to_request")
+            if notification.get("status") == "found":
+                timestamp_to_request = notification.get("last_attempt_timestamp")
+                messages = notification.get("new_attempts")
                 for message in messages:
                     link = message.get("lesson_url")
                     title = message.get("lesson_title")
