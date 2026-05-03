@@ -9,9 +9,9 @@ def run_bot(headers, params, url, bot, chat_id):
             response = requests.get(url, headers=headers, params=params)
             response.raise_for_status()
         except requests.exceptions.ReadTimeout:
-            print("Нет ответа от сервера, повторная попытка")
+            continue
         except requests.exceptions.ConnectionError:
-            print("Нет подключения, повторная попытка")
+            continue
         else:
             if response.json().get("status") == "timeout":
                 timestamp_to_request = response.json().get("timestamp_to_request")
