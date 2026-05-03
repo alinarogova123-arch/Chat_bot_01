@@ -1,9 +1,12 @@
+import time
+
 import requests
 import telebot
 from environs import Env
 
 
 def run_bot(headers, params, url, bot, chat_id):
+    attempt = 0
     while True:
         try:
             response = requests.get(url, headers=headers, params=params)
@@ -11,8 +14,11 @@ def run_bot(headers, params, url, bot, chat_id):
         except requests.exceptions.ReadTimeout:
             continue
         except requests.exceptions.ConnectionError:
-            continue
+            attempt += 1
+            if attempt > 10:
+                time.sleep(20)
         else:
+            attempt = 0
             if response.json().get("status") == "timeout":
                 timestamp_to_request = response.json().get("timestamp_to_request")
             if response.json().get("status") == "found":
