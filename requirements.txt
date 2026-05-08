@@ -1,3 +1,4 @@
 environs==15.0.1
 requests==2.33.1
 pyTelegramBotAPI==4.33.0
+PySocks==1.7.1

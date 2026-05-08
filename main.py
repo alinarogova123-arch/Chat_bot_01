@@ -3,6 +3,7 @@ import time
 import requests
 import telebot
 from environs import Env
+from telebot import apihelper
 
 
 def run_bot(headers, params, url, bot, chat_id):
@@ -42,9 +43,12 @@ def run_bot(headers, params, url, bot, chat_id):
 def main():
     env = Env()
     env.read_env()
+    proxy_ip = env.str("PROXY")
     devman_api_token = env.str("DEVMAN_API_TOKEN")
     tg_bot_api_token = env.str("TELEGRAM_BOT_API_KEY")
     chat_id = env.str("TELEGRAM_CHAT_ID")
+    proxy_url = f'socks5h://{proxy_ip}'
+    apihelper.proxy = {'https': proxy_url}
     bot = telebot.TeleBot(tg_bot_api_token)
     url = "https://dvmn.org/api/long_polling/"
     params = {}
