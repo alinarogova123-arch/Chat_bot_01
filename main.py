@@ -7,9 +7,6 @@ from environs import Env
 from telebot import apihelper
 
 
-logger = logging.getLogger(__name__)
-
-
 def run_bot(headers, params, url, bot, chat_id):
     attempt = 0
     while True:
@@ -54,25 +51,24 @@ def main():
     proxy_url = f'socks5h://{proxy_ip}'
     apihelper.proxy = {'https': proxy_url}
     bot = telebot.TeleBot(tg_bot_api_token)
-
+    logger = logging.getLogger(__name__)
     class MyLogsHandler(logging.Handler):
-
         def emit(self, record):
             log_entry = self.format(record)
             bot.send_message(chat_id=chat_id, text=log_entry)
-
-    logging.basicConfig(format="%(process)d %(levelname)s %(message)s")
     logger.setLevel(logging.INFO)
     logger.addHandler(MyLogsHandler())
     logger.info("Бот запущен.")
-    logger.error("Бот упал с ошибкой")
-
     url = "https://dvmn.org/api/long_polling/"
     params = {}
     headers = {
         "Authorization": f"Token {devman_api_token}"
     }
-    run_bot(headers, params, url, bot, chat_id)
+    try:
+        run_bot(headers, params, url, bot, chat_id)
+    except Exception as e:
+        logger.error("Бот упал с ошибкой")
+        logger.exception(e)
 
 
 if __name__ == "__main__":
