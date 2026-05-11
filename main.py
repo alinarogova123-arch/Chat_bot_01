@@ -1,9 +1,13 @@
 import time
 
+import logging
 import requests
 import telebot
 from environs import Env
 from telebot import apihelper
+
+
+logger = logging.getLogger(__name__)
 
 
 def run_bot(headers, params, url, bot, chat_id):
@@ -50,6 +54,19 @@ def main():
     proxy_url = f'socks5h://{proxy_ip}'
     apihelper.proxy = {'https': proxy_url}
     bot = telebot.TeleBot(tg_bot_api_token)
+
+    class MyLogsHandler(logging.Handler):
+
+        def emit(self, record):
+            log_entry = self.format(record)
+            bot.send_message(chat_id=chat_id, text=log_entry)
+
+    logging.basicConfig(format="%(process)d %(levelname)s %(message)s")
+    logger.setLevel(logging.INFO)
+    logger.addHandler(MyLogsHandler())
+    logger.info("Бот запущен.")
+    logger.error("Бот упал с ошибкой")
+
     url = "https://dvmn.org/api/long_polling/"
     params = {}
     headers = {
